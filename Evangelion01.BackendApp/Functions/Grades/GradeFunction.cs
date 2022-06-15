@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -29,11 +30,13 @@ namespace Evangelion01.Functions.Grades
         [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> Add(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             var studentId = req.HttpContext.GetStudentId();
+            var principalSerialized = JsonConvert.SerializeObject(req.HttpContext.User);
+            _logger.LogDebug(principalSerialized);
 
 
             return new OkResult();
@@ -45,9 +48,12 @@ namespace Evangelion01.Functions.Grades
         [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> GetAll(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req)
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
+
+            var principalSerialized = JsonConvert.SerializeObject(req.HttpContext.User);
+            _logger.LogDebug(principalSerialized);
 
             var studentId = req.HttpContext.GetStudentId();
 
