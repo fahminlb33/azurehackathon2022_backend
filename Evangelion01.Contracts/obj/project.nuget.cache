@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "NVC4x9MsMkpVxEcGW0PIfKkYqrAyene5R9e8ldnczA4bDky+JbMjiDzBEj3kjCCksybmviKOkViDTWeEQUNyBw==",
+  "success": true,
+  "projectFilePath": "D:\\Personal\\AzureHackathon2022\\Evangelion01.Contracts\\Evangelion01.Contracts.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\fahmi\\.nuget\\packages\\newtonsoft.json\\11.0.2\\newtonsoft.json.11.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
