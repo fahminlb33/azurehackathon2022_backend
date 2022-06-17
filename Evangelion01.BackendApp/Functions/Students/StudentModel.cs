@@ -50,7 +50,7 @@ namespace Evangelion01.BackendApp.Functions.Students
             public ValidatorClass()
             {
                 RuleFor(x => x.Name).NotEmpty().MinimumLength(5);
-                RuleFor(x => x.Group).NotEmpty().IsInEnum();
+                RuleFor(x => x.Group).IsInEnum();
             }
         }
     }
@@ -81,7 +81,7 @@ namespace Evangelion01.BackendApp.Functions.Students
             {
                 RuleFor(x => x.StudentId).NotEmpty().Length(36);
                 RuleFor(x => x.Name).NotEmpty().MinimumLength(5);
-                RuleFor(x => x.Group).NotEmpty().IsInEnum();
+                RuleFor(x => x.Group).IsInEnum();
             }
         }
     }

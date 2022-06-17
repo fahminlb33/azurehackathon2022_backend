@@ -54,7 +54,7 @@ namespace Evangelion01.BackendApp.Functions.Grades
             public ValidatorClass()
             {
                 RuleFor(x => x.UserId).NotEmpty().Length(36);
-                RuleFor(x => x.Subject).NotEmpty().IsInEnum();
+                RuleFor(x => x.Subject).IsInEnum();
                 RuleFor(x => x.Semester).GreaterThan(0).LessThanOrEqualTo(5);
                 RuleFor(x => x.Value).GreaterThan(0).LessThanOrEqualTo(100);
             }

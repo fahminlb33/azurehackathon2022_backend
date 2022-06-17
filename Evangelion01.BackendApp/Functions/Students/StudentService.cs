@@ -29,6 +29,7 @@ namespace Evangelion01.BackendApp.Functions.Students
         private readonly IMapper _mapper;
 
         private readonly Container _studentsContainer;
+        private readonly Container _gradesContainer;
 
         public StudentService(ILogger<StudentService> logger, IMapper mapper, CosmosClient cosmosClient)
         {
@@ -38,6 +39,7 @@ namespace Evangelion01.BackendApp.Functions.Students
             // get DB container
             var database = cosmosClient.GetDatabase(EnvironmentConfig.DatabaseName);
             _studentsContainer = database.GetContainer(Student.Container);
+            _gradesContainer = database.GetContainer(Grade.Container);
         }
 
         public async Task<WrappedResponse> Get(GetStudentModel model)
@@ -55,7 +57,7 @@ namespace Evangelion01.BackendApp.Functions.Students
 
             // return the doc
             _logger.LogInformation("Get student, ID: {0}", model.StudentId);
-            return new WrappedResponse(true, "Student deleted", student);
+            return new WrappedResponse(true, "Successfully retrieved record", student);
         }
 
         public async Task<WrappedResponse> GetAll(GetAllStudentModel model)
@@ -105,7 +107,7 @@ namespace Evangelion01.BackendApp.Functions.Students
 
             // return the list
             _logger.LogInformation("Get grade list, record count: {0}", resultset.Count);
-            return new WrappedResponse(true, "Successfully retrieve grades", dto);
+            return new WrappedResponse(true, "Successfully retrieved students", dto);
         }
 
         public async Task<WrappedResponse> Add(AddStudentModel model)
@@ -133,9 +135,24 @@ namespace Evangelion01.BackendApp.Functions.Students
                 return new WrappedResponse(false, "Record not found");
             }
 
-            // delete doc
-            await _studentsContainer.DeleteItemAsync<Student>(model.StudentId, new PartitionKey("id"));
-            return new WrappedResponse(true, "Grade deleted");
+            // delete the student
+            await _studentsContainer.DeleteItemAsync<Student>(student.StudentId, new PartitionKey(student.StudentId));
+            _logger.LogInformation("Deleted student: {0}", string.Join(',', student.StudentId));
+
+            // get related grades
+            sql = $"SELECT * FROM c WHERE StringEquals(c.StudentId, \"{model.StudentId}\")";
+            var grades = await _gradesContainer.RunSql<Grade>(sql);
+
+            // delete all related grades
+            var deletedGrades = new List<string>();
+            foreach (var grade in grades)
+            {
+                await _gradesContainer.DeleteItemAsync<Grade>(grade.GradeId, new PartitionKey(grade.GradeId));
+                deletedGrades.Add(grade.GradeId);
+            }
+
+            _logger.LogInformation("Deleted grades from cascade operation: {0}", string.Join(',', deletedGrades));
+            return new WrappedResponse(true, "Student with it's related grades is deleted");
         }
 
         public async Task<WrappedResponse> Update(UpdateStudentModel model)

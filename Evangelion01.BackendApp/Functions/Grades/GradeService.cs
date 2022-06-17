@@ -55,7 +55,7 @@ namespace Evangelion01.BackendApp.Functions.Grades
 
             // return the doc
             _logger.LogInformation("Get grade, ID: {0}", model.GradeId);
-            return new WrappedResponse(true, "Grade deleted", grade);
+            return new WrappedResponse(true, "Successfully retrieved record", grade);
         }
 
         public async Task<WrappedResponse> GetAll(GetAllGradeModel model)
@@ -109,7 +109,7 @@ namespace Evangelion01.BackendApp.Functions.Grades
 
             // return the list
             _logger.LogInformation("Get grade list, record count: {0}", resultset.Count);
-            return new WrappedResponse(true, "Successfully retrieve grades", dto);
+            return new WrappedResponse(true, "Successfully retrieved grades", dto);
         }
 
         public async Task<WrappedResponse> Add(AddGradeModel model)
@@ -139,7 +139,7 @@ namespace Evangelion01.BackendApp.Functions.Grades
             }
 
             // delete doc
-            await _gradesContainer.DeleteItemAsync<Grade>(model.GradeId, new PartitionKey("id"));
+            await _gradesContainer.DeleteItemAsync<Grade>(model.GradeId, new PartitionKey(model.GradeId));
             return new WrappedResponse(true, "Grade deleted");
         }
 
