@@ -33,7 +33,7 @@ namespace Evangelion01.Functions.Grades
         [Authorize]
         [FunctionName("GradesFunction_Get")]
         [OpenApiOperation(operationId: "GradesFunction_Get", tags: new[] { GradesFunctionTag })]
-        [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = false)]
+        [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = true)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<GradeDto[]>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
         public async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "grades/{gradeId}")] HttpRequest req, string gradeId)
@@ -133,7 +133,7 @@ namespace Evangelion01.Functions.Grades
         [Authorize]
         [FunctionName("GradesFunction_Delete")]
         [OpenApiOperation(operationId: "GradesFunction_Delete", tags: new[] { GradesFunctionTag })]
-        [OpenApiParameter("gradeId", In = ParameterLocation.Path)]
+        [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = true)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
         public async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "grades/{gradeId}")] HttpRequest req, string gradeId)

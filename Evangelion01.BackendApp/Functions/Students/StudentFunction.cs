@@ -33,7 +33,7 @@ namespace Evangelion01.BackendApp.Functions.Students
         [Authorize]
         [FunctionName("StudentFunction_Get")]
         [OpenApiOperation(operationId: "StudentFunction_Get", tags: new[] { StudentsFunctionTag })]
-        [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = false)]
+        [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = true)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto[]>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
         public async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "students/{studentId}")] HttpRequest req, string studentId)
@@ -132,7 +132,7 @@ namespace Evangelion01.BackendApp.Functions.Students
         [Authorize]
         [FunctionName("StudentFunction_Delete")]
         [OpenApiOperation(operationId: "StudentFunction_Delete", tags: new[] { StudentsFunctionTag })]
-        [OpenApiParameter("studentId", In = ParameterLocation.Path)]
+        [OpenApiParameter("studentId", In = ParameterLocation.Path, Type = typeof(string), Required = true)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
         public async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "students/{studentId}")] HttpRequest req, string studentId)
