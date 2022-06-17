@@ -34,7 +34,7 @@ var studentsContainer = database.GetContainer(Student.Container);
 await foreach (var student in studentCsvReader.EnumerateRecordsAsync(new Student()))
 {
     Console.WriteLine("Importing: {0}", student.Name);
-    //await studentsContainer.CreateItemAsync(student);
+    await studentsContainer.CreateItemAsync(student);
 }
 
 // -- import grades data
