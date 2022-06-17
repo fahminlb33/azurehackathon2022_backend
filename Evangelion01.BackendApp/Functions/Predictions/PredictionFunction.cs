@@ -30,17 +30,17 @@ namespace Evangelion01.BackendApp.Functions.Predictions
 
         [FunctionName("PredictionFunction_PredictStudent")]
         [OpenApiOperation(operationId: "PredictionFunction_PredictStudent", tags: new[] { PredictionFunctionTag })]
-        [OpenApiParameter("userId", In = ParameterLocation.Query, Type = typeof(string), Required = false)]
+        [OpenApiParameter("userId", In = ParameterLocation.Path, Type = typeof(string), Required = true)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<PredictionDto>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> PredictStudent([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "predictions/{userId}")] HttpRequest req, string userId)
+        public async Task<IActionResult> PredictStudent([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "predictions/{studentId}")] HttpRequest req, string studentId)
         {
             try
             {
                 // get model object
                 var model = new PredictionModel
                 {
-                    UserId = userId
+                    StudentId = studentId
                 };
 
                 // validate model

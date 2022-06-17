@@ -1,4 +1,5 @@
 ﻿using Evangelion01.BackendApp.Infrastructure;
+using Evangelion01.BackendApp.Infrastructure.Helpers;
 using Evangelion01.Contracts;
 using Evangelion01.Contracts.Models;
 using Microsoft.Azure.Cosmos;
@@ -38,32 +39,34 @@ namespace Evangelion01.BackendApp.Functions.Predictions
         public async Task<WrappedResponse> PredictStudent(PredictionModel model)
         {
             // find the user
-            var user = _usersContainer
-               .GetItemLinqQueryable<Student>()
-               .FirstOrDefault((doc) => doc.StudentId == model.UserId);
+            var sql = $"SELECT * FROM c WHERE StringEquals(c.id, \"{model.StudentId}\")";
+            var student = await _usersContainer.GetFirstOrDefault<Student>(sql);
 
             // if no user is found, return
-            if (user == null)
+            if (student == null)
             {
                 return new WrappedResponse(false, "User not found");
             }
 
             // get all grades associated with this user
-            var grades = _gradesContainer
-                .GetItemLinqQueryable<Grade>()
-                .Where((doc) => doc.StudentId == user.StudentId)
-                .ToList();
+            sql = $"SELECT * FROM c WHERE StringEquals(c.StudentId, \"{model.StudentId}\")";
+            var grades = await _gradesContainer.RunSql<Grade>(sql);
+
+            // preprocess data
             var (predictionFeatures, usedData) = GradesToArray(grades);
 
             // run prediction for single item
-            var client = _httpClientFactory.CreateClient();
-            var predictionResult = await client.PostAsJsonAsync(EnvironmentConfig.PredictionUri, new
+            var body = new
             {
                 data = new[] { predictionFeatures }
-            });
+            };
+            var client = _httpClientFactory.CreateClient();
+            var predictionResult = await client.PostAsJsonAsync(EnvironmentConfig.PredictionUri, body);
             if (!predictionResult.IsSuccessStatusCode)
             {
-                _logger.LogError("Cannot run prediction: " + predictionResult.ReasonPhrase);
+                var response = await predictionResult.Content.ReadAsStringAsync();
+
+                _logger.LogError("Cannot run prediction: " + response);
                 return new WrappedResponse(false, "Cannot run prediction");
             }
 
@@ -102,6 +105,7 @@ namespace Evangelion01.BackendApp.Functions.Predictions
                 gradeGrouped.GetValueOrDefault(GradeSubject.PhysicalEducation, 0),
                 gradeGrouped.GetValueOrDefault(GradeSubject.CivicEducation, 0),
                 gradeGrouped.GetValueOrDefault(GradeSubject.Crafts, 0),
+                gradeGrouped.GetValueOrDefault(GradeSubject.Arts, 0),
                 gradeGrouped.GetValueOrDefault(GradeSubject.History, 0),
                 gradeGrouped.GetValueOrDefault(GradeSubject.IndonesianHistory, 0),
                 gradeGrouped.GetValueOrDefault(GradeSubject.IndonesianLiterature, 0),
