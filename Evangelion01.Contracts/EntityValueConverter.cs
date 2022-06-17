@@ -63,6 +63,7 @@ namespace Evangelion01.Contracts
                 GradeCategory.Others,
                 new[]
                 {
+                    GradeSubject.Religion,
                     GradeSubject.CivicEducation,
                     GradeSubject.PhysicalEducation,
                 }

@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Evangelion01.BackendApp.Functions.Grades;
 using Evangelion01.BackendApp.Infrastructure.Authentication;
 using Evangelion01.BackendApp.Infrastructure.Helpers;
 using Evangelion01.Contracts;
@@ -15,46 +14,47 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace Evangelion01.Functions.Grades
+namespace Evangelion01.BackendApp.Functions.Students
 {
-    public class GradeFunction
+    public class StudentFunction
     {
-        public const string GradesFunctionTag = "Grades API";
+        public const string StudentsFunctionTag = "Students API";
 
-        private readonly ILogger<GradeFunction> _logger;
-        private readonly IGradeService _gradeService;
-                
-        public GradeFunction(ILogger<GradeFunction> log, IGradeService gradeService)
+        private readonly ILogger<StudentFunction> _logger;
+        private readonly IStudentService _studentService;
+
+        public StudentFunction(ILogger<StudentFunction> log, IStudentService studentService)
         {
             _logger = log;
-            _gradeService = gradeService;
+            _studentService = studentService;
         }
 
+
         [Authorize]
-        [FunctionName("GradesFunction_Get")]
-        [OpenApiOperation(operationId: "GradesFunction_Get", tags: new[] { GradesFunctionTag })]
+        [FunctionName("StudentFunction_Get")]
+        [OpenApiOperation(operationId: "StudentFunction_Get", tags: new[] { StudentsFunctionTag })]
         [OpenApiParameter("gradeId", In = ParameterLocation.Path, Type = typeof(string), Required = false)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<GradeDto[]>))]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto[]>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "grades/{gradeId}")] HttpRequest req, string gradeId)
+        public async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "students/{studentId}")] HttpRequest req, string studentId)
         {
             try
             {
                 // get model object
-                var model = new GetGradeModel
+                var model = new GetStudentModel
                 {
-                    GradeId = gradeId
+                    StudentId = studentId
                 };
 
                 // validate model
-                var validationResult = await Helpers.ValidateAsync<GetGradeModel, GetGradeModel.ValidatorClass>(model);
+                var validationResult = await Helpers.ValidateAsync<GetStudentModel, GetStudentModel.ValidatorClass>(model);
                 if (!validationResult.IsValid)
                 {
                     return validationResult.ToBadRequest();
                 }
 
                 // run handler
-                var response = await _gradeService.Get(validationResult.Value!);
+                var response = await _studentService.Get(validationResult.Value!);
                 return response.Success ? new JsonResult(response) : new ConflictObjectResult(response);
             }
             catch (Exception ex)
@@ -65,31 +65,30 @@ namespace Evangelion01.Functions.Grades
         }
 
         [Authorize]
-        [FunctionName("GradesFunction_GetAll")]
-        [OpenApiOperation(operationId: "GradesFunction_GetAll", tags: new[] { GradesFunctionTag })]
-        [OpenApiParameter("userId", In = ParameterLocation.Query, Type = typeof(string), Required = false)]
-        [OpenApiParameter("subject", In = ParameterLocation.Query, Type = typeof(GradeSubject), Required = false)]
-        [OpenApiParameter("semester", In = ParameterLocation.Query, Type = typeof(int), Required = false)]
+        [FunctionName("StudentFunction_GetAll")]
+        [OpenApiOperation(operationId: "StudentFunction_GetAll", tags: new[] { StudentsFunctionTag })]
+        [OpenApiParameter("keyword", In = ParameterLocation.Query, Type = typeof(string), Required = false)]
+        [OpenApiParameter("group", In = ParameterLocation.Query, Type = typeof(StudentGroup), Required = false)]
         [OpenApiParameter("page", In = ParameterLocation.Query, Type = typeof(int), Required = false)]
         [OpenApiParameter("limit", In = ParameterLocation.Query, Type = typeof(int), Required = false)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<GradeDto[]>))]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto[]>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "grades")] HttpRequest req)
+        public async Task<IActionResult> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "students")] HttpRequest req)
         {
             try
             {
                 // get model object
-                var model = await req.GetJsonQuery<GetAllGradeModel>();
+                var model = await req.GetJsonQuery<GetAllStudentModel>();
 
                 // validate model
-                var validationResult = await Helpers.ValidateAsync<GetAllGradeModel, GetAllGradeModel.ValidatorClass>(model);
+                var validationResult = await Helpers.ValidateAsync<GetAllStudentModel, GetAllStudentModel.ValidatorClass>(model);
                 if (!validationResult.IsValid)
                 {
                     return validationResult.ToBadRequest();
                 }
 
                 // run handler
-                var response = await _gradeService.GetAll(validationResult.Value!);
+                var response = await _studentService.GetAll(validationResult.Value!);
                 return response.Success ? new JsonResult(response) : new ConflictObjectResult(response);
             }
             catch (Exception ex)
@@ -100,27 +99,27 @@ namespace Evangelion01.Functions.Grades
         }
 
         [Authorize]
-        [FunctionName("GradesFunction_Add")]
-        [OpenApiOperation(operationId: "GradesFunction_Add", tags: new[] { GradesFunctionTag })]
-        [OpenApiRequestBody(Constants.ContentTypeJson, typeof(AddGradeModel), Required = true)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<GradeDto>))]
+        [FunctionName("StudentFunction_Add")]
+        [OpenApiOperation(operationId: "StudentFunction_Add", tags: new[] { StudentsFunctionTag })]
+        [OpenApiRequestBody(Constants.ContentTypeJson, typeof(AddStudentModel), Required = true)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> Add([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "grades")] HttpRequest req)
+        public async Task<IActionResult> Add([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "students")] HttpRequest req)
         {
             try
             {
                 // get model object
-                var model = await req.GetJsonBody<AddGradeModel>();
+                var model = await req.GetJsonBody<AddStudentModel>();
 
                 // validate model
-                var validationResult = await Helpers.ValidateAsync<AddGradeModel, AddGradeModel.ValidatorClass>(model);
+                var validationResult = await Helpers.ValidateAsync<AddStudentModel, AddStudentModel.ValidatorClass>(model);
                 if (!validationResult.IsValid)
                 {
                     return validationResult.ToBadRequest();
                 }
 
                 // run handler
-                var response = await _gradeService.Add(validationResult.Value!);
+                var response = await _studentService.Add(validationResult.Value!);
                 return response.Success ? new JsonResult(response) : new ConflictObjectResult(response);
             }
             catch (Exception ex)
@@ -131,30 +130,30 @@ namespace Evangelion01.Functions.Grades
         }
 
         [Authorize]
-        [FunctionName("GradesFunction_Delete")]
-        [OpenApiOperation(operationId: "GradesFunction_Delete", tags: new[] { GradesFunctionTag })]
-        [OpenApiParameter("gradeId", In = ParameterLocation.Path)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse))]
+        [FunctionName("StudentFunction_Delete")]
+        [OpenApiOperation(operationId: "StudentFunction_Delete", tags: new[] { StudentsFunctionTag })]
+        [OpenApiParameter("studentId", In = ParameterLocation.Path)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "grades/{gradeId}")] HttpRequest req, string gradeId)
+        public async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "students/{studentId}")] HttpRequest req, string studentId)
         {
             try
             {
                 // get model object
-                var model = new DeleteGradeModel
+                var model = new DeleteStudentModel
                 {
-                    GradeId = gradeId,
+                    StudentId = studentId
                 };
 
                 // validate model
-                var validationResult = await Helpers.ValidateAsync<DeleteGradeModel, DeleteGradeModel.ValidatorClass>(model);
+                var validationResult = await Helpers.ValidateAsync<DeleteStudentModel, DeleteStudentModel.ValidatorClass>(model);
                 if (!validationResult.IsValid)
                 {
                     return validationResult.ToBadRequest();
                 }
 
                 // run handler
-                var response = await _gradeService.Delete(validationResult.Value!);
+                var response = await _studentService.Delete(validationResult.Value!);
                 return response.Success ? new JsonResult(response) : new ConflictObjectResult(response);
             }
             catch (Exception ex)
@@ -165,27 +164,27 @@ namespace Evangelion01.Functions.Grades
         }
 
         [Authorize]
-        [FunctionName("GradesFunction_Update")]
-        [OpenApiOperation(operationId: "GradesFunction_Update", tags: new[] { GradesFunctionTag })]
-        [OpenApiRequestBody(Constants.ContentTypeJson, typeof(UpdateGradeModel), Required = true)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse))]
+        [FunctionName("StudentFunction_Update")]
+        [OpenApiOperation(operationId: "StudentFunction_Update", tags: new[] { StudentsFunctionTag })]
+        [OpenApiRequestBody(Constants.ContentTypeJson, typeof(UpdateStudentModel), Required = true)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: Constants.ContentTypeJson, bodyType: typeof(WrappedResponse<StudentDto>))]
         [OpenApiSecurity(Constants.OpenApiBearer, SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = Constants.OpenApJwt)]
-        public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "grades")] HttpRequest req)
+        public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "students")] HttpRequest req)
         {
             try
             {
                 // get model object
-                var model = await req.GetJsonBody<UpdateGradeModel>();
+                var model = await req.GetJsonBody<UpdateStudentModel>();
 
                 // validate model
-                var validationResult = await Helpers.ValidateAsync<UpdateGradeModel, UpdateGradeModel.ValidatorClass>(model);
+                var validationResult = await Helpers.ValidateAsync<UpdateStudentModel, UpdateStudentModel.ValidatorClass>(model);
                 if (!validationResult.IsValid)
                 {
                     return validationResult.ToBadRequest();
                 }
 
                 // run handler
-                var response = await _gradeService.Update(validationResult.Value!);
+                var response = await _studentService.Update(validationResult.Value!);
                 return response.Success ? new JsonResult(response) : new ConflictObjectResult(response);
             }
             catch (Exception ex)

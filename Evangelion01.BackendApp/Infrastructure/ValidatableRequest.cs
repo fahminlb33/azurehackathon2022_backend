@@ -8,7 +8,7 @@ namespace Evangelion01.BackendApp.Infrastructure
         /// <summary>
         /// The deserialized value of the request.
         /// </summary>
-        public T Value { get; set; }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Whether or not the deserialized value was found to be valid.

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evangelion01.BackendApp", "Evangelion01.BackendApp\Evangelion01.BackendApp.csproj", "{7062F920-38BB-429A-A2F0-3F594AD7BEE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evangelion01.BackendApp", "Evangelion01.BackendApp\Evangelion01.BackendApp.csproj", "{7062F920-38BB-429A-A2F0-3F594AD7BEE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evangelion01.DataTool", "Evangelion01.DataTool\Evangelion01.DataTool.csproj", "{8587F007-BDD6-43BE-ACEC-305AF8802591}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evangelion01.DataTool", "Evangelion01.DataTool\Evangelion01.DataTool.csproj", "{8587F007-BDD6-43BE-ACEC-305AF8802591}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evangelion01.Contracts", "Evangelion01.Contracts\Evangelion01.Contracts.csproj", "{9D315770-8BDA-4891-AFD8-B16F66B1D496}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evangelion01.Contracts", "Evangelion01.Contracts\Evangelion01.Contracts.csproj", "{9D315770-8BDA-4891-AFD8-B16F66B1D496}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿namespace Evangelion01.Contracts.Models
 {
-    public enum UserGroup
+    public enum StudentGroup
     {
         MIPA,
         IPS,

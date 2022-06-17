@@ -1,4 +1,6 @@
 ﻿using Evangelion01.BackendApp.Functions.Grades;
+using Evangelion01.BackendApp.Functions.Predictions;
+using Evangelion01.BackendApp.Functions.Students;
 using Evangelion01.BackendApp.Infrastructure;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -6,13 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+[assembly: FunctionsStartup(typeof(Evangelion01.BackendApp.Startup))]
 
 namespace Evangelion01.BackendApp
 {
@@ -36,11 +35,12 @@ namespace Evangelion01.BackendApp
             // register ASP.NET services
             services.AddLogging();
             services.AddHttpClient();
-            //services.AddAutoMapper(typeof(SaweriaProfile));
+            services.AddAutoMapper(typeof(GradeMapperProfile));
 
             // register function services
             services.AddSingleton<IGradeService, GradeService>();
-            //services.AddSingleton<ICommentService, CommentService>();
+            services.AddSingleton<IStudentService, StudentService>();
+            services.AddSingleton<IPredictionService, PredictionService>();
 
             // register infrastructure components
             services.AddSingleton((provider) =>
@@ -59,10 +59,9 @@ namespace Evangelion01.BackendApp
             // register cosmos db
             services.AddSingleton((factory) =>
             {
-                var cosmosClientBuilder = new CosmosClientBuilder(config[SettingsKey.DatabaseConnectionString]);
+                var cosmosClientBuilder = new CosmosClientBuilder(EnvironmentConfig.DatabaseConnectionString);
                 return cosmosClientBuilder
                     .WithConnectionModeDirect()
-                    .WithBulkExecution(true)
                     .Build();
             });
         }
