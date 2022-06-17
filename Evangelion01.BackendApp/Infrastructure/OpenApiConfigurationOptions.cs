@@ -7,6 +7,7 @@ namespace Evangelion01.BackendApp.Infrastructure
 {
     public class OpenApiConfigurationOptions : DefaultOpenApiConfigurationOptions
     {
+        public override bool ForceHttps { get; set; } = true;
         public override OpenApiVersionType OpenApiVersion { get; set; } = OpenApiVersionType.V3;
         public override OpenApiInfo Info { get; set; } = new OpenApiInfo
         {
