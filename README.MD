@@ -4,6 +4,10 @@
 
 This repository contains an Azure Functions written in C# and data import tool to seed the server database with training data used in the [data repository](https://github.com/fahminlb33/azurehackathon2022_data).
 
+- Video: still in progress
+- Presentation: https://docs.google.com/presentation/d/1PYp3iUQk7AS_qXICWVH6bCzVSjrARw7D/edit?usp=sharing&ouid=101893075820394963212&rtpof=true&sd=true
+- Demo: http://evangelion01.kodesiana.com/
+
 Links to related repo:
 
 - [Backend](https://github.com/fahminlb33/azurehackathon2022_backend)
