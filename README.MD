@@ -4,6 +4,12 @@
 
 This repository contains an Azure Functions written in C# and data import tool to seed the server database with training data used in the [data repository](https://github.com/fahminlb33/azurehackathon2022_data).
 
+Links to related repo:
+
+- [Backend](https://github.com/fahminlb33/azurehackathon2022_backend)
+- [Frontend](https://github.com/fahminlb33/azurehackathon2022_frontend) - [Upstream](https://github.com/ImBIOS/azurehackathon2022_frontend)
+- [Data](https://github.com/fahminlb33/azurehackathon2022_data)
+
 ## Running The Backend Locally
 
 To run the backend locally, create a `appsetings.json` with the following keys and then run the project in Visual Studio 2022.
