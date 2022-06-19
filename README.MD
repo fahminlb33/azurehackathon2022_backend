@@ -1,4 +1,4 @@
-# Evangelion01 - SNMPTN Profiling Backend [![Build and Deploy](https://github.com/fahminlb33/azurehackathon2022_backend/actions/workflows/master_evangelion01backend.yml/badge.svg)](https://github.com/fahminlb33/azurehackathon2022_backend/actions/workflows/master_evangelion01backend.yml)
+# Evangelion01 - SNMPTN Profiling [![Build and Deploy](https://github.com/fahminlb33/azurehackathon2022_backend/actions/workflows/master_evangelion01backend.yml/badge.svg)](https://github.com/fahminlb33/azurehackathon2022_backend/actions/workflows/master_evangelion01backend.yml)
 
 > Backend and Data Import Tool
 
